@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Legal Reading Speed Calculator</title>
+  <title>Legal Tools Suite – Code Counsel × SynergySpheres 3.0</title>
 
   <!-- Tailwind CSS -->
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
@@ -11,9 +11,10 @@
   <!-- Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Space+Grotesk:wght@400;500&display=swap" rel="stylesheet" />
 
-  <!-- PDF and DOCX Support -->
+  <!-- Libraries -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.min.js"></script>
   <script src="https://unpkg.com/mammoth/mammoth.browser.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
   <style>
     body { background-color: #0f172a; color: #fff; font-family: 'Space Grotesk', sans-serif; }
@@ -21,130 +22,136 @@
     .glass {
       background: rgba(255, 255, 255, 0.05);
       border-radius: 1rem;
-      backdrop-filter: blur(8px);
+      backdrop-filter: blur(10px);
       padding: 2rem;
+      transition: all 0.3s ease;
+    }
+    .glass:hover {
+      transform: scale(1.02);
+      background: rgba(255, 255, 255, 0.08);
+    }
+    #intro-screen {
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(to bottom right, #1e293b, #0f172a);
+      z-index: 50;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    #heroCanvas { width: 320px; height: 320px; }
+    #enter-button {
+      background-color: #6366f1;
+      padding: 0.75rem 2rem;
+      border-radius: 0.5rem;
+      font-weight: 600;
+      color: white;
+      margin-top: 1rem;
+    }
+    .brand-badge {
+      margin-top: 1rem;
+      font-size: 0.875rem;
+      color: #94a3b8;
+    }
+    .tool-icon {
+      width: 40px;
+      height: 40px;
+      margin-bottom: 1rem;
     }
   </style>
 </head>
 <body class="min-h-screen flex flex-col items-center px-4 py-10">
 
-  <h1 class="text-3xl md:text-5xl font-orbitron font-bold mb-4 text-center">Legal Reading Speed Calculator</h1>
-  <p class="text-gray-400 mb-10 text-center">Upload legal text or choose a sample to measure your reading speed (WPM)</p>
-
-  <div class="glass max-w-4xl w-full">
-    <!-- Timer & Upload -->
-    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4">
-      <div class="flex gap-2">
-        <button onclick="startTimer()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded">Start</button>
-        <button onclick="stopTimer()" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded">Finish</button>
-        <button onclick="resetTool()" class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded">Reset</button>
-      </div>
-      <input type="file" id="fileUpload" accept=".txt,.pdf,.doc,.docx" class="text-white" onchange="handleFile(event)" />
-    </div>
-
-    <p id="uploadedFileName" class="text-sm text-gray-400 mb-2 italic"></p>
-
-    <!-- Paragraph Display -->
-    <div class="mb-4">
-      <p id="paragraphText" class="h-56 overflow-y-scroll p-4 bg-gray-900 border border-white rounded whitespace-pre-wrap"></p>
-    </div>
-
-    <!-- Sample Selection -->
-    <div class="mb-4">
-      <label for="difficulty" class="text-sm block text-gray-300 mb-1">Or choose a sample:</label>
-      <select id="difficulty" onchange="loadParagraph(this.value)" class="bg-gray-800 text-white px-4 py-2 rounded w-full">
-        <option value="">-- Select Difficulty --</option>
-        <option value="easy">Easy – Legal Definitions</option>
-        <option value="moderate">Moderate – Case Summary</option>
-        <option value="challenging">Challenging – Court Judgment</option>
-        <option value="doctrine">Doctrine – Legal Philosophy</option>
-        <option value="intl">International Law Excerpt</option>
-      </select>
-    </div>
-
-    <!-- Result -->
-    <div id="results" class="bg-gray-800 p-4 text-center rounded"></div>
+  <!-- Intro Branded Experience -->
+  <div id="intro-screen">
+    <canvas id="heroCanvas"></canvas>
+    <audio id="introSound" src="avangard.mp3" preload="auto"></audio>
+    <h1 class="text-3xl font-orbitron font-bold mt-4 text-center">SynergySpheres 3.0</h1>
+    <p class="text-sm text-indigo-300">Legal Intelligence & Automation</p>
+    <p class="brand-badge">A Tool by <strong>Code Counsel</strong> × <strong>SynergySpheres 3.0</strong></p>
+    <button id="enter-button">Enter Tool Suite</button>
   </div>
 
-  <footer class="mt-10 text-sm text-gray-500 text-center">
-    &copy; 2025 Legal Tools | Open Source by Code Counsel
-  </footer>
+  <!-- Tool Suite -->
+  <main id="tool-interface" class="hidden w-full">
+    <h1 class="text-4xl md:text-5xl font-orbitron font-bold mb-4 text-center">Legal Tools Suite</h1>
+    <p class="text-gray-400 mb-10 text-center">Empowering modern legal practice with intelligent Web3 tools</p>
 
-  <!-- JavaScript Logic -->
+    <div class="grid gap-8 sm:grid-cols-2 max-w-5xl mx-auto">
+      <div class="glass text-center">
+        <img src="icons/speed.svg" alt="Reading Speed" class="tool-icon mx-auto">
+        <h2 class="text-xl font-orbitron mb-2">Reading Speed Calculator</h2>
+        <p class="text-sm text-gray-400 mb-4">Measure your WPM using legal texts from judgments to contracts.</p>
+        <a href="reading-speed.html" class="text-indigo-400 hover:text-white font-semibold">Open Tool →</a>
+      </div>
+      <div class="glass text-center">
+        <img src="icons/citation.svg" alt="Citation Tool" class="tool-icon mx-auto">
+        <h2 class="text-xl font-orbitron mb-2">Legal Citation Formatter</h2>
+        <p class="text-sm text-gray-400 mb-4">Convert references into Bluebook, OSCOLA, or local law styles.</p>
+        <a href="#" class="text-indigo-400 hover:text-white font-semibold">Coming Soon</a>
+      </div>
+      <div class="glass text-center">
+        <img src="icons/clause.svg" alt="Clause Generator" class="tool-icon mx-auto">
+        <h2 class="text-xl font-orbitron mb-2">Clause Generator</h2>
+        <p class="text-sm text-gray-400 mb-4">Build customized contract clauses for NDAs, IP, and SaaS terms.</p>
+        <a href="#" class="text-indigo-400 hover:text-white font-semibold">Coming Soon</a>
+      </div>
+      <div class="glass text-center">
+        <img src="icons/dictionary.svg" alt="Legal Dictionary" class="tool-icon mx-auto">
+        <h2 class="text-xl font-orbitron mb-2">Legal Dictionary AI</h2>
+        <p class="text-sm text-gray-400 mb-4">Search and understand complex legal terms with plain explanations.</p>
+        <a href="#" class="text-indigo-400 hover:text-white font-semibold">Coming Soon</a>
+      </div>
+    </div>
+
+    <footer class="mt-16 text-sm text-gray-500 text-center">
+      &copy; 2025 Code Counsel × SynergySpheres 3.0 — Tools for Legal Transformation
+    </footer>
+  </main>
+
+  <!-- Scripts -->
   <script>
-    let startTime = 0, endTime = 0, timerRunning = false;
+    const introSound = document.getElementById("introSound");
+    window.addEventListener("load", () => {
+      setTimeout(() => introSound.play(), 500);
+    });
 
-    function startTimer() {
-      startTime = new Date().getTime();
-      timerRunning = true;
-      document.getElementById('results').innerText = 'Timer started... begin reading.';
+    document.getElementById("enter-button").addEventListener("click", () => {
+      document.getElementById("intro-screen").style.display = "none";
+      document.getElementById("tool-interface").classList.remove("hidden");
+    });
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById("heroCanvas"), alpha: true });
+    renderer.setSize(320, 320);
+
+    const icosahedron = new THREE.IcosahedronGeometry(1.2, 0);
+    const material = new THREE.MeshStandardMaterial({ color: 0x38bdf8, metalness: 0.6, roughness: 0.4 });
+    const shape = new THREE.Mesh(icosahedron, material);
+    scene.add(shape);
+
+    const orbitLogo = new THREE.TextureLoader().load("icons/codecounsel-logo.png");
+    const orbitMat = new THREE.SpriteMaterial({ map: orbitLogo });
+    const sprite = new THREE.Sprite(orbitMat);
+    sprite.scale.set(0.5, 0.5, 1);
+    scene.add(sprite);
+
+    const light = new THREE.PointLight(0xffffff, 1);
+    light.position.set(5, 5, 5);
+    scene.add(light);
+    camera.position.z = 3;
+
+    function animate() {
+      requestAnimationFrame(animate);
+      shape.rotation.x += 0.01;
+      shape.rotation.y += 0.01;
+      sprite.position.x = Math.sin(Date.now() * 0.002) * 2;
+      sprite.position.y = Math.cos(Date.now() * 0.002) * 2;
+      renderer.render(scene, camera);
     }
-
-    function stopTimer() {
-      if (!timerRunning) return;
-      endTime = new Date().getTime();
-      const timeInMin = (endTime - startTime) / 60000;
-      const words = document.getElementById("paragraphText").innerText.trim().split(/\s+/).length;
-      const wpm = Math.round(words / timeInMin);
-      document.getElementById("results").innerText = `Words: ${words} · Time: ${timeInMin.toFixed(2)} mins · Speed: ${wpm} WPM`;
-      timerRunning = false;
-    }
-
-    function resetTool() {
-      document.getElementById("paragraphText").innerText = '';
-      document.getElementById("results").innerText = '';
-      document.getElementById("fileUpload").value = '';
-      document.getElementById("uploadedFileName").innerText = '';
-      startTime = 0; endTime = 0; timerRunning = false;
-    }
-
-    function loadParagraph(type) {
-      const texts = {
-        easy: "Plaintiff: A person who brings a case against another in a court of law.",
-        moderate: "In Khan v. State, the court found that circumstantial evidence was not enough for conviction.",
-        challenging: "It is a well-settled principle that due process of law is the cornerstone of judicial fairness.",
-        doctrine: "Natural law theorists assert that law must be rooted in moral reasoning, not just social order.",
-        intl: "Under Article 38 of the ICJ Statute, international law comprises treaties, customs, and general principles recognized by civilized nations."
-      };
-      document.getElementById("paragraphText").innerText = texts[type] || "";
-    }
-
-    function handleFile(event) {
-      const file = event.target.files[0];
-      if (!file) return;
-      document.getElementById("uploadedFileName").innerText = `Uploaded: ${file.name}`;
-      const reader = new FileReader();
-
-      if (file.name.endsWith('.txt')) {
-        reader.onload = () => document.getElementById("paragraphText").innerText = reader.result;
-        reader.readAsText(file);
-      } else if (file.name.endsWith('.pdf')) {
-        const loadingTask = pdfjsLib.getDocument(URL.createObjectURL(file));
-        loadingTask.promise.then(pdf => {
-          let text = '';
-          const pagePromises = [];
-          for (let i = 1; i <= pdf.numPages; i++) {
-            pagePromises.push(pdf.getPage(i).then(page =>
-              page.getTextContent().then(content =>
-                text += content.items.map(item => item.str).join(' ') + '\n'
-              )
-            ));
-          }
-          Promise.all(pagePromises).then(() =>
-            document.getElementById("paragraphText").innerText = text
-          );
-        });
-      } else if (file.name.endsWith('.doc') || file.name.endsWith('.docx')) {
-        reader.onload = e => {
-          mammoth.extractRawText({ arrayBuffer: e.target.result }).then(res =>
-            document.getElementById("paragraphText").innerText = res.value
-          );
-        };
-        reader.readAsArrayBuffer(file);
-      } else {
-        alert("Unsupported file type.");
-      }
-    }
+    animate();
   </script>
 </body>
 </html>
