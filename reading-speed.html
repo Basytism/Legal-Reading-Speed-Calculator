@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Legal Reading Speed Calculator – Code Counsel</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.min.js"></script>
+  <script src="https://unpkg.com/mammoth/mammoth.browser.min.js"></script>
+  <style>
+    body {
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      color: #fff;
+      font-family: 'Segoe UI', sans-serif;
+    }
+    .glass {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 1rem;
+      backdrop-filter: blur(10px);
+      padding: 2rem;
+    }
+    #timerIcon {
+      transition: all 0.3s ease-in-out;
+    }
+    footer {
+      margin-top: 2rem;
+      font-size: 0.875rem;
+      color: #94a3b8;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-center p-4">
+
+  <h1 class="text-3xl font-bold mb-2">📖 Code Counsel Reading Speed Calculator</h1>
+  <p class="text-sm text-gray-400 mb-6">Powered by Synergy Spheres 3.0 | Developed by <strong>@Basytism</strong></p>
+
+  <div class="glass w-full max-w-4xl">
+    <div class="flex justify-between items-center mb-4">
+      <div class="flex items-center gap-2">
+        <button onclick="startTimer()" id="startBtn" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded">Start</button>
+        <button onclick="stopTimer()" id="stopBtn" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded ml-2">Finish</button>
+        <button onclick="resetTimer()" class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded ml-2">Reset</button>
+        <span id="timerIcon" class="hidden ml-3 text-green-400 animate-pulse">⏳ Timer Running</span>
+      </div>
+      <input type="file" id="fileUpload" class="text-white" accept=".txt,.pdf,.doc,.docx" onchange="handleFile(event)">
+    </div>
+
+    <p id="uploadedFileName" class="text-sm text-gray-300 italic mb-2"></p>
+
+    <p id="paragraphText" class="whitespace-pre-wrap h-56 overflow-y-scroll p-4 border border-white rounded bg-gray-900 mb-4">
+      <!-- Placeholder for default paragraph -->
+    </p>
+
+    <div class="text-sm text-gray-300 mb-2">Choose Difficulty:</div>
+    <select onchange="loadParagraph(this.value)" class="bg-gray-800 text-white px-4 py-2 rounded w-full mb-4">
+      <option value="">-- Select a Sample Legal Text --</option>
+      <option value="easy">Easy – Legal Dictionary</option>
+      <option value="moderate">Moderate – Case Summary</option>
+      <option value="challenging">Challenging – Full Judgment</option>
+      <option value="doctrine">Doctrine – Legal Philosophy</option>
+      <option value="international">International Law Paragraph</option>
+    </select>
+
+    <div id="results" class="bg-gray-800 p-4 rounded text-white text-center mb-4"></div>
+    <div id="history" class="text-sm text-gray-400"></div>
+  </div>
+
+  <footer class="text-center">
+    &copy; 2025 Code Counsel. All rights reserved.
+  </footer>
+
+  <script>
+    let startTime, endTime;
+    const history = [];
+
+    const samples = {
+      easy: `A contract is a legally binding agreement between two or more parties. It typically includes an offer, acceptance, consideration, and mutual intent to create legal obligations. Contracts can be written or oral and may relate to employment, sale of goods, or services. Breach of contract can result in damages or other legal remedies.`,
+      moderate: `In the case of Carlill v. Carbolic Smoke Ball Co. (1893), the Court held that an advertisement promising a reward constituted a unilateral contract upon performance of the stated conditions. This judgment clarified principles of offer, acceptance, and consideration in contract law and is a foundational case in common law jurisdictions.`,
+      challenging: `The Supreme Court in PLD 2009 SC 879 deliberated upon the independence of the judiciary as part of the basic structure of the Constitution. The Court ruled that any attempt to undermine judicial autonomy is unconstitutional. This judgment emphasized that constitutional supremacy cannot be overridden by executive fiat, and reinforced the principle of separation of powers.`,
+      doctrine: `Hans Kelsen's Pure Theory of Law posits that law is a hierarchy of norms, each deriving validity from a higher norm, ultimately culminating in a Grundnorm (basic norm). This theory separates law from morality and maintains that legal systems must be understood in their own normative terms. It is foundational in understanding the positivist legal framework.`,
+      international: `According to the Vienna Convention on the Law of Treaties (1969), a treaty is an agreement under international law entered into by states or international organizations. Article 26 of the Convention codifies the principle of pacta sunt servanda: every treaty in force is binding upon the parties and must be performed in good faith.`
+    };
+
+    function startTimer() {
+      startTime = new Date();
+      document.getElementById('startBtn').disabled = true;
+      document.getElementById('timerIcon').classList.remove('hidden');
+    }
+
+    function stopTimer() {
+      endTime = new Date();
+      const timeDiff = (endTime - startTime) / 1000;
+      const text = document.getElementById('paragraphText').innerText;
+      const wordCount = text.trim().split(/\s+/).length;
+
+      const wpm = (wordCount / timeDiff) * 60;
+      const wps = wordCount / timeDiff;
+
+      const result = `📚 Words: ${wordCount} | ⏱️ Time: ${Math.floor(timeDiff / 60)}m ${Math.floor(timeDiff % 60)}s | ⚡ ${wpm.toFixed(2)} WPM | ${wps.toFixed(2)} WPS`;
+      history.push(result);
+
+      document.getElementById('results').innerHTML = `
+        <p>${result}</p>
+      `;
+
+      document.getElementById('history').innerHTML = `
+        <h3 class='text-sm font-bold mt-2 mb-1'>🕒 Session History:</h3>
+        <ul class='list-disc pl-5 space-y-1'>
+          ${history.map(item => `<li>${item}</li>`).join('')}
+        </ul>
+      `;
+
+      document.getElementById('timerIcon').classList.add('hidden');
+    }
+
+    function resetTimer() {
+      document.getElementById('startBtn').disabled = false;
+      document.getElementById('results').innerHTML = '';
+      document.getElementById('timerIcon').classList.add('hidden');
+    }
+
+    function loadParagraph(level) {
+      document.getElementById('paragraphText').innerText = samples[level] || '';
+      document.getElementById('uploadedFileName').innerText = '';
+    }
+
+    function handleFile(event) {
+      const file = event.target.files[0];
+      const fileName = file.name;
+      const paragraphText = document.getElementById('paragraphText');
+      document.getElementById('uploadedFileName').innerText = `📄 Uploaded: ${fileName}`;
+
+      if (file.type === "text/plain") {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          paragraphText.innerText = e.target.result;
+        };
+        reader.readAsText(file);
+      } else if (file.type === "application/pdf") {
+        const reader = new FileReader();
+        reader.onload = function() {
+          const typedarray = new Uint8Array(reader.result);
+          pdfjsLib.getDocument(typedarray).promise.then(function(pdf) {
+            let textContent = "";
+            const numPages = pdf.numPages;
+            const loadPage = function(pageNumber) {
+              pdf.getPage(pageNumber).then(function(page) {
+                page.getTextContent().then(function(content) {
+                  content.items.forEach(function(item) {
+                    textContent += item.str + " ";
+                  });
+                  if (pageNumber < numPages) {
+                    loadPage(pageNumber + 1);
+                  } else {
+                    paragraphText.innerText = textContent;
+                  }
+                });
+              });
+            };
+            loadPage(1);
+          });
+        };
+        reader.readAsArrayBuffer(file);
+      } else if (file.name.endsWith(".doc") || file.name.endsWith(".docx")) {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+          mammoth.extractRawText({ arrayBuffer: event.target.result })
+            .then(function(result) {
+              paragraphText.innerText = result.value;
+            })
+            .catch(function(err) {
+              paragraphText.innerText = "Error reading Word document.";
+            });
+        };
+        reader.readAsArrayBuffer(file);
+      } else {
+        alert("Unsupported file type. Only .txt, .pdf, .doc, .docx supported.");
+      }
+    }
+  </script>
+
+</body>
+</html>
