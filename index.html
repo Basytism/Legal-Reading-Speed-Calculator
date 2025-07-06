@@ -3,121 +3,115 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Legal Reading Speed Calculator – Code Counsel</title>
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Space+Grotesk:wght@400;500&display=swap" rel="stylesheet">
+  <title>Legal Reading Speed Calculator</title>
+
+  <!-- Tailwind CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Space+Grotesk:wght@400;500&display=swap" rel="stylesheet" />
+
+  <!-- PDF and DOCX Support -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.min.js"></script>
   <script src="https://unpkg.com/mammoth/mammoth.browser.min.js"></script>
+
   <style>
-    body { background: #0f172a; color: #fff; font-family: 'Space Grotesk', sans-serif; }
+    body { background-color: #0f172a; color: #fff; font-family: 'Space Grotesk', sans-serif; }
     .font-orbitron { font-family: 'Orbitron', sans-serif; }
-    .glass { background: rgba(255, 255, 255, 0.05); border-radius: 1rem; backdrop-filter: blur(10px); padding: 2rem; }
-    footer { margin-top: 2rem; font-size: 0.875rem; color: #94a3b8; text-align: center; }
+    .glass {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 1rem;
+      backdrop-filter: blur(8px);
+      padding: 2rem;
+    }
   </style>
 </head>
-<body class="min-h-screen flex flex-col p-4">
+<body class="min-h-screen flex flex-col items-center px-4 py-10">
 
-  <!-- Header -->
-  <header class="bg-gradient-to-r from-purple-900 to-blue-900 shadow-md mb-4">
-    <div class="max-w-7xl mx-auto flex items-center justify-between px-6 py-4">
-      <div class="flex items-center space-x-3">
-        <img src="logo-full.png" alt="Synergy Logo" class="w-10 h-10" />
-        <span class="text-xl font-bold text-white uppercase tracking-wider font-orbitron">Code Counsel</span>
-      </div>
-      <nav class="space-x-6 text-white font-medium">
-        <a href="../index.html" class="hover:text-indigo-300">Home</a>
-        <a href="../tools/index.html" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-full transition">All Tools</a>
-      </nav>
-    </div>
-  </header>
+  <h1 class="text-3xl md:text-5xl font-orbitron font-bold mb-4 text-center">Legal Reading Speed Calculator</h1>
+  <p class="text-gray-400 mb-10 text-center">Upload legal text or choose a sample to measure your reading speed (WPM)</p>
 
-  <!-- Title -->
-  <section class="text-center mb-10">
-    <h1 class="text-4xl font-bold font-orbitron mb-2">Legal Reading Speed Calculator</h1>
-    <p class="text-sm text-gray-400">Developed by <strong>@Basytism</strong> · Powered by <strong>Synergy Spheres 3.0</strong></p>
-  </section>
-
-  <!-- Tool UI -->
-  <div class="glass w-full max-w-5xl mx-auto">
-    <div class="mb-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+  <div class="glass max-w-4xl w-full">
+    <!-- Timer & Upload -->
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4">
       <div class="flex gap-2">
         <button onclick="startTimer()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded">Start</button>
         <button onclick="stopTimer()" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded">Finish</button>
-        <button onclick="resetTimer()" class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded">Reset</button>
+        <button onclick="resetTool()" class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded">Reset</button>
       </div>
-      <input type="file" id="fileUpload" class="text-white" accept=".txt,.pdf,.doc,.docx" onchange="handleFile(event)">
+      <input type="file" id="fileUpload" accept=".txt,.pdf,.doc,.docx" class="text-white" onchange="handleFile(event)" />
     </div>
 
-    <p id="uploadedFileName" class="text-sm text-gray-400 italic mb-2"></p>
+    <p id="uploadedFileName" class="text-sm text-gray-400 mb-2 italic"></p>
 
+    <!-- Paragraph Display -->
     <div class="mb-4">
-      <p id="paragraphText" class="whitespace-pre-wrap h-56 overflow-y-scroll p-4 border border-white rounded bg-gray-900"></p>
+      <p id="paragraphText" class="h-56 overflow-y-scroll p-4 bg-gray-900 border border-white rounded whitespace-pre-wrap"></p>
     </div>
 
+    <!-- Sample Selection -->
     <div class="mb-4">
-      <label for="difficulty" class="block text-sm text-gray-300 mb-1">Select Sample:</label>
+      <label for="difficulty" class="text-sm block text-gray-300 mb-1">Or choose a sample:</label>
       <select id="difficulty" onchange="loadParagraph(this.value)" class="bg-gray-800 text-white px-4 py-2 rounded w-full">
-        <option value="">-- Choose Difficulty --</option>
-        <option value="easy">Easy – Legal Terms</option>
+        <option value="">-- Select Difficulty --</option>
+        <option value="easy">Easy – Legal Definitions</option>
         <option value="moderate">Moderate – Case Summary</option>
-        <option value="challenging">Challenging – Judgment</option>
-        <option value="doctrine">Doctrine – Philosophy</option>
-        <option value="intl">International Law</option>
+        <option value="challenging">Challenging – Court Judgment</option>
+        <option value="doctrine">Doctrine – Legal Philosophy</option>
+        <option value="intl">International Law Excerpt</option>
       </select>
     </div>
 
-    <div id="results" class="bg-gray-800 p-4 rounded text-white text-center mb-4"></div>
+    <!-- Result -->
+    <div id="results" class="bg-gray-800 p-4 text-center rounded"></div>
   </div>
 
-  <!-- Footer -->
-  <footer>
-    <p>&copy; 2025 Code Counsel · Part of the Legal Tools Suite</p>
-    <p><a href="../tools/index.html" class="underline text-indigo-400">Return to Tool Suite</a></p>
+  <footer class="mt-10 text-sm text-gray-500 text-center">
+    &copy; 2025 Legal Tools | Open Source by You
   </footer>
 
-  <!-- Script Logic -->
+  <!-- JavaScript Logic -->
   <script>
     let startTime = 0, endTime = 0, timerRunning = false;
 
     function startTimer() {
       startTime = new Date().getTime();
       timerRunning = true;
-      document.getElementById('results').innerText = 'Timer started. Begin reading...';
+      document.getElementById('results').innerText = '⏱ Timer started... begin reading.';
     }
 
     function stopTimer() {
       if (!timerRunning) return;
       endTime = new Date().getTime();
-      const timeTaken = (endTime - startTime) / 1000 / 60; // in minutes
-      const words = document.getElementById('paragraphText').innerText.trim().split(/\s+/).length;
-      const wpm = Math.round(words / timeTaken);
-      document.getElementById('results').innerText = `Words: ${words} · Time: ${timeTaken.toFixed(2)} mins · Speed: ${wpm} WPM`;
+      const timeInMin = (endTime - startTime) / 60000;
+      const words = document.getElementById("paragraphText").innerText.trim().split(/\s+/).length;
+      const wpm = Math.round(words / timeInMin);
+      document.getElementById("results").innerText = `Words: ${words} · Time: ${timeInMin.toFixed(2)} mins · Speed: ${wpm} WPM`;
       timerRunning = false;
     }
 
-    function resetTimer() {
-      document.getElementById('results').innerText = '';
-      document.getElementById('paragraphText').innerText = '';
-      document.getElementById('fileUpload').value = '';
-      startTime = 0;
-      endTime = 0;
+    function resetTool() {
+      document.getElementById("paragraphText").innerText = '';
+      document.getElementById("results").innerText = '';
+      document.getElementById("fileUpload").value = '';
+      document.getElementById("uploadedFileName").innerText = '';
+      startTime = 0; endTime = 0; timerRunning = false;
     }
 
     function loadParagraph(type) {
-      const textMap = {
-        easy: "Plaintiff means a person who brings a case against another.",
-        moderate: "In Smith v. Jones, the court held that the negligence was shared.",
-        challenging: "The judgment in Brown v. Board emphasized equal protection.",
-        doctrine: "Legal positivism holds that law is a set of rules made by humans.",
-        intl: "According to Article 38 of the ICJ Statute, sources of law include..."
+      const texts = {
+        easy: "Plaintiff: A person who brings a case against another in a court of law.",
+        moderate: "In Khan v. State, the court found that circumstantial evidence was not enough for conviction.",
+        challenging: "It is a well-settled principle that due process of law is the cornerstone of judicial fairness.",
+        doctrine: "Natural law theorists assert that law must be rooted in moral reasoning, not just social order.",
+        intl: "Under Article 38 of the ICJ Statute, international law comprises treaties, customs, and general principles recognized by civilized nations."
       };
-      document.getElementById("paragraphText").innerText = textMap[type] || "";
+      document.getElementById("paragraphText").innerText = texts[type] || "";
     }
 
     function handleFile(event) {
       const file = event.target.files[0];
       if (!file) return;
-
       document.getElementById("uploadedFileName").innerText = `Uploaded: ${file.name}`;
       const reader = new FileReader();
 
@@ -131,23 +125,24 @@
           const pagePromises = [];
           for (let i = 1; i <= pdf.numPages; i++) {
             pagePromises.push(pdf.getPage(i).then(page =>
-              page.getTextContent().then(content => {
-                text += content.items.map(item => item.str).join(' ') + '\n';
-              })
+              page.getTextContent().then(content =>
+                text += content.items.map(item => item.str).join(' ') + '\n'
+              )
             ));
           }
-          Promise.all(pagePromises).then(() => {
-            document.getElementById("paragraphText").innerText = text;
-          });
+          Promise.all(pagePromises).then(() =>
+            document.getElementById("paragraphText").innerText = text
+          );
         });
       } else if (file.name.endsWith('.doc') || file.name.endsWith('.docx')) {
-        reader.onload = event => {
-          mammoth.extractRawText({ arrayBuffer: event.target.result })
-            .then(result => document.getElementById("paragraphText").innerText = result.value);
+        reader.onload = e => {
+          mammoth.extractRawText({ arrayBuffer: e.target.result }).then(res =>
+            document.getElementById("paragraphText").innerText = res.value
+          );
         };
         reader.readAsArrayBuffer(file);
       } else {
-        alert('Unsupported file type');
+        alert("Unsupported file type.");
       }
     }
   </script>
