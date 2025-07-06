@@ -65,7 +65,102 @@
           <div class="mt-4 bg-gray-900 p-4 rounded">
             <iframe src="reading-speed.html" width="100%" height="650px" class="rounded border border-gray-700"></iframe>
           </div>
-        </details>
+        </details><!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Legal Reading Speed Calculator – Code Counsel</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Space+Grotesk:wght@400;500&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.min.js"></script>
+  <script src="https://unpkg.com/mammoth/mammoth.browser.min.js"></script>
+  <style>
+    body { background: #0f172a; color: #fff; font-family: 'Space Grotesk', sans-serif; }
+    .font-orbitron { font-family: 'Orbitron', sans-serif; }
+    .glass { background: rgba(255, 255, 255, 0.05); border-radius: 1rem; backdrop-filter: blur(10px); padding: 2rem; }
+    footer { margin-top: 2rem; font-size: 0.875rem; color: #94a3b8; text-align: center; }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col p-4">
+
+  <!-- Header -->
+  <header class="bg-gradient-to-r from-purple-900 to-blue-900 shadow-md mb-4">
+    <div class="max-w-7xl mx-auto flex items-center justify-between px-6 py-4">
+      <div class="flex items-center space-x-3">
+        <img src="logo-full.png" alt="Synergy Logo" class="w-10 h-10" />
+        <span class="text-xl font-bold text-white uppercase tracking-wider font-orbitron">Code Counsel</span>
+      </div>
+      <nav class="space-x-6 text-white font-medium">
+        <a href="../index.html" class="hover:text-indigo-300">Home</a>
+        <a href="../tools/index.html" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-full transition">All Tools</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Tool Title -->
+  <section class="text-center mb-10">
+    <h1 class="text-4xl font-bold font-orbitron mb-2">Legal Reading Speed Calculator</h1>
+    <p class="text-sm text-gray-400">Developed by <strong>@Basytism</strong> · Powered by <strong>Synergy Spheres 3.0</strong></p>
+  </section>
+
+  <!-- Main Tool Interface -->
+  <div class="glass w-full max-w-5xl mx-auto">
+    <div class="mb-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+      <div class="flex gap-2">
+        <button onclick="startTimer()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded">Start</button>
+        <button onclick="stopTimer()" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded">Finish</button>
+        <button onclick="resetTimer()" class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded">Reset</button>
+      </div>
+      <input type="file" id="fileUpload" class="text-white" accept=".txt,.pdf,.doc,.docx" onchange="handleFile(event)">
+    </div>
+
+    <p id="uploadedFileName" class="text-sm text-gray-400 italic mb-2"></p>
+    <div class="mb-4">
+      <p id="paragraphText" class="whitespace-pre-wrap h-56 overflow-y-scroll p-4 border border-white rounded bg-gray-900"></p>
+    </div>
+
+    <div class="mb-4">
+      <label for="difficulty" class="block text-sm text-gray-300 mb-1">Select Sample:</label>
+      <select id="difficulty" onchange="loadParagraph(this.value)" class="bg-gray-800 text-white px-4 py-2 rounded w-full">
+        <option value="">-- Choose Difficulty --</option>
+        <option value="easy">Easy – Legal Terms</option>
+        <option value="moderate">Moderate – Case Summary</option>
+        <option value="challenging">Challenging – Judgment</option>
+        <option value="doctrine">Doctrine – Philosophy</option>
+        <option value="intl">International Law</option>
+      </select>
+    </div>
+
+    <div id="results" class="bg-gray-800 p-4 rounded text-white text-center mb-4"></div>
+    <div id="history" class="text-sm text-gray-400"></div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <p>&copy; 2025 Code Counsel · Part of the Legal Tools Suite</p>
+    <p><a href="../tools/index.html" class="underline text-indigo-400">Return to Tool Suite</a></p>
+  </footer>
+
+  <!-- JavaScript Logic (placeholder) -->
+  <script>
+    function startTimer() { /* Implement timer start */ }
+    function stopTimer() { /* Implement timer stop */ }
+    function resetTimer() { /* Implement timer reset */ }
+    function handleFile(e) { /* File reading logic */ }
+    function loadParagraph(type) {
+      const textMap = {
+        easy: "Plaintiff means a person who brings a case against another.",
+        moderate: "In Smith v. Jones, the court held that the negligence was shared.",
+        challenging: "The judgment in Brown v. Board emphasized equal protection.",
+        doctrine: "Legal positivism holds that law is a set of rules made by humans.",
+        intl: "According to Article 38 of the ICJ Statute, sources of law include..."
+      };
+      document.getElementById("paragraphText").innerText = textMap[type] || "";
+    }
+  </script>
+</body>
+</html>
       </div>
 
       <!-- Placeholder Cards -->
