@@ -7,6 +7,7 @@
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Space+Grotesk:wght@400;500&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
   <style>
     .font-orbitron { font-family: 'Orbitron', sans-serif; }
     .font-space { font-family: 'Space Grotesk', sans-serif; }
@@ -19,6 +20,7 @@
       inset: 0;
       background-color: #0f172a;
       z-index: 50;
+      text-align: center;
     }
     #enter-button {
       background-color: #4f46e5;
@@ -27,6 +29,13 @@
       font-weight: 600;
       color: white;
       margin-top: 1rem;
+      transition: background-color 0.3s ease;
+    }
+    #enter-button:hover {
+      background-color: #4338ca;
+    }
+    iframe {
+      border: none;
     }
   </style>
 </head>
@@ -34,31 +43,40 @@
 
   <!-- Intro Screen -->
   <div id="intro-screen">
-    <canvas id="heroCanvas" class="mb-6" style="width: 300px; height: 300px;"></canvas>
-    <h1 class="text-2xl font-orbitron font-bold">Welcome to Synergy Spheres Tools</h1>
+    <lottie-player src="https://lottie.host/7e18713f-f75b-4a0d-89db-7dcfdb69b4f7/rQOYBUrM7P.json" background="transparent" speed="1" style="width: 260px; height: 260px;" loop autoplay></lottie-player>
+    <h1 class="text-3xl font-orbitron font-bold mt-4">Welcome to Code Counsel</h1>
+    <p class="text-sm text-gray-400">Legal Innovation & Web3 Utility Toolkit by Synergy Spheres</p>
     <button id="enter-button">Enter Tool Suite</button>
   </div>
 
   <!-- Tool Suite Grid -->
-  <section id="tool-suite" class="hidden px-6 py-16 max-w-6xl mx-auto">
-    <h2 class="text-3xl font-orbitron font-bold mb-10 text-center">Legal Tools Suite</h2>
+  <section id="tool-suite" class="hidden px-6 py-20 max-w-6xl mx-auto">
+    <h2 class="text-4xl font-orbitron font-bold mb-12 text-center">Legal Tools Suite</h2>
     <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
-      <div class="bg-gray-800 rounded-xl shadow-md hover:shadow-xl p-6 transition transform hover:-translate-y-1 hover:scale-105 duration-300">
-        <div class="flex items-center justify-between mb-4">
-          <h3 class="text-lg font-bold font-orbitron">Reading Speed Calculator</h3>
+
+      <!-- Reading Tool Card -->
+      <div class="bg-gray-800 rounded-xl shadow-lg hover:shadow-2xl p-6 transition transform hover:-translate-y-1 hover:scale-105 duration-300 flex flex-col justify-between">
+        <div>
+          <h3 class="text-lg font-bold font-orbitron mb-2">Reading Speed Calculator</h3>
+          <p class="text-gray-400 text-sm">Measure legal reading fluency with DOCX, PDF or typed legal text samples.</p>
         </div>
-        <p class="text-gray-400 text-sm mb-2">Measure your legal reading fluency using PDF, DOCX, or custom legal text.</p>
-        <details class="text-sm">
-          <summary class="cursor-pointer text-indigo-400 hover:text-white font-semibold transition duration-200">Open Tool →</summary>
+        <details class="text-sm mt-4">
+          <summary class="cursor-pointer text-indigo-400 hover:text-white font-semibold transition duration-200">Open Tool</summary>
           <div class="mt-4 bg-gray-900 p-4 rounded">
-            <!-- Embedded tool code starts here -->
-            <iframe src="reading-speed.html" width="100%" height="600px" class="rounded border border-gray-700"></iframe>
+            <iframe src="reading-speed.html" width="100%" height="650px" class="rounded border border-gray-700"></iframe>
           </div>
         </details>
       </div>
 
-      <div class="bg-gray-700 rounded-xl p-6 text-gray-400">More tools coming soon...</div>
-      <div class="bg-gray-700 rounded-xl p-6 text-gray-400">Blockchain Drafting Toolkit (Coming Soon)</div>
+      <!-- Placeholder Cards -->
+      <div class="bg-gray-700 rounded-xl p-6 text-gray-400 flex items-center justify-center text-center">
+        <p>More tools coming soon...</p>
+      </div>
+
+      <div class="bg-gray-700 rounded-xl p-6 text-gray-400 flex items-center justify-center text-center">
+        <p>Blockchain Drafting Toolkit (Coming Soon)</p>
+      </div>
+
     </div>
   </section>
 
@@ -72,28 +90,6 @@
       introScreen.style.display = 'none';
       toolSuite.classList.remove('hidden');
     });
-
-    // 3D Graphics (rotating cube)
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
-    const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('heroCanvas'), alpha: true });
-    renderer.setSize(300, 300);
-    const geometry = new THREE.BoxGeometry();
-    const material = new THREE.MeshStandardMaterial({ color: 0x6366f1 });
-    const cube = new THREE.Mesh(geometry, material);
-    scene.add(cube);
-    const light = new THREE.PointLight(0xffffff, 1, 100);
-    light.position.set(10, 10, 10);
-    scene.add(light);
-    camera.position.z = 3;
-
-    function animate() {
-      requestAnimationFrame(animate);
-      cube.rotation.x += 0.01;
-      cube.rotation.y += 0.01;
-      renderer.render(scene, camera);
-    }
-    animate();
   </script>
 </body>
 </html>
